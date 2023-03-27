@@ -1,2 +1,2 @@
 # hub
-Hub is ChatGPT plugin . provide plugin manager.
+Hub is ChatGPT plugin set. provide plugin manager.
