@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package hub.io.api.plugin.v1alpha1;
+
+import "protoc-gen-validate/validate/validate.proto";
+import "hub.io/api/types/page.proto";
+
+option go_package = "hub.io/api/plugin/v1alpha1;v1alpha1";
+
+message Plugin {
+  int32 id = 1;
+  string domain = 2; // plugin domain
+  string name = 3; // plugin name
+  string description = 4; // plugin description
+  string auth_type = 5; // plugin auth type
+  string logo_url = 6; // plugin logo url
+  string contact_email = 7; // plugin contact email
+  string organization = 8; // plugin organization
+  string api_type = 9; // plugin api type
+  string api_url = 10; // plugin api url
+  repeated PluginLabel label = 11; // plugin label
+  string state = 12; // plugin state,published or unpublished
+  int32 install_num = 13; // plugin install num
+  int32 score = 14; // plugin score
+  int32 heat = 15; // plugin heat
+  string created_at = 16;
+  string updated_at = 17;
+}
+
+message PluginLabel {
+  string key = 1;
+  string value = 2;
+}
+
+
+message ListPluginRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+
+  // order by
+  hub.io.api.types.OrderBy order_by = 3;
+
+  // sort by
+  hub.io.api.types.SortBy sort_by = 4;
+
+  // fuzzy search
+  string fuzzy_name = 5;
+}
+
+message ListPluginResponse {
+  hub.io.api.types.Page page = 1;
+  repeated Plugin item = 2;
+}
