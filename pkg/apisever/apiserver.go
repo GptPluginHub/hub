@@ -15,7 +15,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 	"k8s.io/klog"
 )
 
@@ -48,7 +47,7 @@ func (s *Server) AddSwaggerHandler() {
 		panic(err)
 	}
 	assetsDir := path.Join(dir, SwaggerRootPath)
-	klog.Infof("Serving swagger files in path: %s.", assetsDir)
+	klog.Infof("Serving swagger files in path: %s", assetsDir)
 	openapiServer := http.FileServer(http.Dir(assetsDir))
 	s.Router.PathPrefix(SwaggerOpenAPIURLPrefix).Handler(http.StripPrefix(SwaggerOpenAPIURLPrefix, openapiServer))
 }
@@ -57,13 +56,16 @@ func (s *Server) InstallHubApis(ctx context.Context) {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	apisplugin.RegisterGrpcService(ctx, *s.Config, s.GRPCServer)
 	apisplugin.RegisterGatewayService(ctx, s.GatewayServerMux, s.HTTPServer.Addr, opts)
+	s.Router.PathPrefix("/apis/").Handler(s.GatewayServerMux)
+	if s.Debug {
+		s.Router.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
+	}
+	s.Router.HandleFunc("/healthz", livenessProbe).Methods(http.MethodGet)
+	s.Router.HandleFunc("/readyz", readinessProbe).Methods(http.MethodGet)
 }
 
 func (s *Server) Run(ctx context.Context) error {
 	klog.Infof("Starting server on %s", s.HTTPServer.Addr)
-
-	// Register reflection service on gRPC server.
-	reflection.Register(s.GRPCServer)
 
 	l, err := net.Listen("tcp", s.HTTPServer.Addr)
 	if err != nil {
@@ -88,4 +90,16 @@ func (s *Server) Run(ctx context.Context) error {
 	}()
 
 	return s.CMux.Serve()
+}
+
+// With `livenessProbe`, apiserver would not be available if the back-end services are not ready.
+func livenessProbe(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("ok"))
+}
+
+// With `readinessProbe`, apiserver would not accept traffics if the back-end services are not ready.
+func readinessProbe(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("ok"))
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type Options struct {
@@ -90,9 +91,12 @@ func (o *Options) NewServer(ctx context.Context) *apisever.Server {
 		GatewayServerMux: runtime.NewServeMux(),
 		Router:           mux.NewRouter(),
 	}
+	// Register reflection service on gRPC server.
+	reflection.Register(s.GRPCServer)
 	// add swagger handler
 	s.AddSwaggerHandler()
 	// install apis
 	s.InstallHubApis(ctx)
+	s.HTTPServer.Handler = s.Router
 	return s
 }
