@@ -389,6 +389,61 @@ func (x *ListPluginResponse) GetItem() []*Plugin {
 	return nil
 }
 
+type CreatePluginRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Domain string `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Label  string `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+}
+
+func (x *CreatePluginRequest) Reset() {
+	*x = CreatePluginRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreatePluginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreatePluginRequest) ProtoMessage() {}
+
+func (x *CreatePluginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreatePluginRequest.ProtoReflect.Descriptor instead.
+func (*CreatePluginRequest) Descriptor() ([]byte, []int) {
+	return file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreatePluginRequest) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *CreatePluginRequest) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
 var File_hub_io_api_plugin_v1alpha1_plugin_proto protoreflect.FileDescriptor
 
 var file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc = []byte{
@@ -456,10 +511,16 @@ var file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc = []byte{
 	0x61, 0x67, 0x65, 0x12, 0x36, 0x0a, 0x04, 0x69, 0x74, 0x65, 0x6d, 0x18, 0x02, 0x20, 0x03, 0x28,
 	0x0b, 0x32, 0x22, 0x2e, 0x68, 0x75, 0x62, 0x2e, 0x69, 0x6f, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x70,
 	0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2e, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31, 0x2e, 0x50,
-	0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x04, 0x69, 0x74, 0x65, 0x6d, 0x42, 0x25, 0x5a, 0x23, 0x68,
-	0x75, 0x62, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e,
-	0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31, 0x3b, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68,
-	0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x04, 0x69, 0x74, 0x65, 0x6d, 0x22, 0x55, 0x0a, 0x13, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x1f, 0x0a, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x06, 0x64, 0x6f, 0x6d,
+	0x61, 0x69, 0x6e, 0x12, 0x1d, 0x0a, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x00, 0x52, 0x05, 0x6c, 0x61, 0x62,
+	0x65, 0x6c, 0x42, 0x25, 0x5a, 0x23, 0x68, 0x75, 0x62, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69,
+	0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31,
+	0x3b, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -474,21 +535,22 @@ func file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDescGZIP() []byte {
 	return file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDescData
 }
 
-var file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_hub_io_api_plugin_v1alpha1_plugin_proto_goTypes = []interface{}{
-	(*Plugin)(nil),             // 0: hub.io.api.plugin.v1alpha1.Plugin
-	(*PluginLabel)(nil),        // 1: hub.io.api.plugin.v1alpha1.PluginLabel
-	(*ListPluginRequest)(nil),  // 2: hub.io.api.plugin.v1alpha1.ListPluginRequest
-	(*ListPluginResponse)(nil), // 3: hub.io.api.plugin.v1alpha1.ListPluginResponse
-	(types.OrderBy)(0),         // 4: hub.io.api.types.OrderBy
-	(types.SortBy)(0),          // 5: hub.io.api.types.SortBy
-	(*types.Page)(nil),         // 6: hub.io.api.types.Page
+	(*Plugin)(nil),              // 0: hub.io.api.plugin.v1alpha1.Plugin
+	(*PluginLabel)(nil),         // 1: hub.io.api.plugin.v1alpha1.PluginLabel
+	(*ListPluginRequest)(nil),   // 2: hub.io.api.plugin.v1alpha1.ListPluginRequest
+	(*ListPluginResponse)(nil),  // 3: hub.io.api.plugin.v1alpha1.ListPluginResponse
+	(*CreatePluginRequest)(nil), // 4: hub.io.api.plugin.v1alpha1.CreatePluginRequest
+	(types.OrderBy)(0),          // 5: hub.io.api.types.OrderBy
+	(types.SortBy)(0),           // 6: hub.io.api.types.SortBy
+	(*types.Page)(nil),          // 7: hub.io.api.types.Page
 }
 var file_hub_io_api_plugin_v1alpha1_plugin_proto_depIdxs = []int32{
 	1, // 0: hub.io.api.plugin.v1alpha1.Plugin.label:type_name -> hub.io.api.plugin.v1alpha1.PluginLabel
-	4, // 1: hub.io.api.plugin.v1alpha1.ListPluginRequest.order_by:type_name -> hub.io.api.types.OrderBy
-	5, // 2: hub.io.api.plugin.v1alpha1.ListPluginRequest.sort_by:type_name -> hub.io.api.types.SortBy
-	6, // 3: hub.io.api.plugin.v1alpha1.ListPluginResponse.page:type_name -> hub.io.api.types.Page
+	5, // 1: hub.io.api.plugin.v1alpha1.ListPluginRequest.order_by:type_name -> hub.io.api.types.OrderBy
+	6, // 2: hub.io.api.plugin.v1alpha1.ListPluginRequest.sort_by:type_name -> hub.io.api.types.SortBy
+	7, // 3: hub.io.api.plugin.v1alpha1.ListPluginResponse.page:type_name -> hub.io.api.types.Page
 	0, // 4: hub.io.api.plugin.v1alpha1.ListPluginResponse.item:type_name -> hub.io.api.plugin.v1alpha1.Plugin
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
@@ -551,6 +613,18 @@ func file_hub_io_api_plugin_v1alpha1_plugin_proto_init() {
 				return nil
 			}
 		}
+		file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreatePluginRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -558,7 +632,7 @@ func file_hub_io_api_plugin_v1alpha1_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

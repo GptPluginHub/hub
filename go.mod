@@ -18,6 +18,7 @@ require (
 	golang.org/x/term v0.6.0
 	golang.org/x/tools v0.7.0
 	google.golang.org/grpc v1.54.0
+	google.golang.org/protobuf v1.30.0
 	hub.io/api v0.0.0-00010101000000-000000000000
 	k8s.io/code-generator v0.26.3
 	k8s.io/klog v1.0.0
@@ -57,7 +58,6 @@ require (
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/genproto v0.0.0-20230331144136-dcfb400f0633 // indirect
 	google.golang.org/grpc/examples v0.0.0-20230331171333-e97991991ce6 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

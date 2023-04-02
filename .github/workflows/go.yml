@@ -21,7 +21,10 @@ jobs:
       with:
         go-version: 1.19
     - name: verify-all
-      run: make verify-all
+      run: |
+        go mod tidy
+        go mod vendor
+        make verify-all
      
     - name: Build
       run: go build -v ./...

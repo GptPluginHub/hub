@@ -16,4 +16,11 @@ service PluginService {
       get: "/apis/hub.io/v1alpha1/plugins"
     };
   }
+
+  rpc CreatePlugin(hub.io.api.plugin.v1alpha1.CreatePluginRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/apis/hub.io/v1alpha1/plugin"
+      body: "*"
+    };
+  }
 }
