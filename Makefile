@@ -19,3 +19,7 @@ verify-vendor:
 
 .PHONY: verify-all
 verify-all: lint verify-vendor
+
+.PHONY: genall
+genall:
+	cd ./api/ && $(MAKE) genall

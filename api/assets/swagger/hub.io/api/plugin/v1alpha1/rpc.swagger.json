@@ -16,6 +16,38 @@
     "application/json"
   ],
   "paths": {
+    "/apis/hub.io/v1alpha1/plugin": {
+      "post": {
+        "operationId": "PluginService_CreatePlugin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1alpha1CreatePluginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PluginService"
+        ]
+      }
+    },
     "/apis/hub.io/v1alpha1/plugins": {
       "get": {
         "operationId": "PluginService_ListPlugins",
@@ -159,6 +191,17 @@
       ],
       "default": "SORT_BY_UNSPECIFIED",
       "description": "SortBy determines the data list order reference.\n\n - SORT_BY_UNSPECIFIED: Unspecified is default, no sorting.\n - field_name: Sort result by name.\n - created_time: Sort result by creationTimestamp."
+    },
+    "v1alpha1CreatePluginRequest": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
     },
     "v1alpha1ListPluginResponse": {
       "type": "object",
