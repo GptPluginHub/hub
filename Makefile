@@ -23,3 +23,7 @@ verify-all: lint verify-vendor
 .PHONY: genall
 genall:
 	cd ./api/ && $(MAKE) genall
+
+.PHONY: build
+build:
+	go build -o ./bin/hub cmd/main.go
