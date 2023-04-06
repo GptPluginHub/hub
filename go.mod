@@ -22,6 +22,7 @@ require (
 	hub.io/api v0.0.0-00010101000000-000000000000
 	k8s.io/code-generator v0.26.3
 	k8s.io/klog v1.0.0
+	k8s.io/klog/v2 v2.80.1
 )
 
 require (
@@ -62,7 +63,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/gengo v0.0.0-20220902162205-c0856e24416d // indirect
-	k8s.io/klog/v2 v2.80.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )

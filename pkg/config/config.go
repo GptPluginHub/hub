@@ -14,19 +14,25 @@ const (
 type Config struct {
 	Debug        bool          `json:"debug" yaml:"debug" mapstructure:"debug"`
 	MysqlOptions *MysqlOptions `json:"mysql" yaml:"mysql" mapstructure:"mysql"`
+	APICacheConf *APICache     `json:"api_cache_conf" yaml:"api_cache_conf" mapstructure:"api_cache_conf"`
 }
 
 type MysqlOptions struct {
 	// mysql host
-	Host string
+	Host string `json:"host" yaml:"host" mapstructure:"host"`
 	// mysql port
-	Port int
+	Port int `json:"port" yaml:"port" mapstructure:"port"`
 	// mysql user
-	User string
+	User string `json:"user" yaml:"user" mapstructure:"user"`
 	// mysql password
-	Password string
+	Password string `json:"password" yaml:"password" mapstructure:"password"`
 	// mysql database
-	Database string
+	Database string `json:"database" yaml:"database" mapstructure:"database"`
+}
+
+type APICache struct {
+	Dir      string `json:"dir" yaml:"dir" mapstructure:"dir"`
+	FileName string `json:"file_name" yaml:"file_name" mapstructure:"file_name"`
 }
 
 func (m *MysqlOptions) AddFlags(fs *pflag.FlagSet) {
@@ -47,10 +53,17 @@ func NewDefaultMysqlOption() *MysqlOptions {
 	}
 }
 
+func NewDefaultAPICacheConf() *APICache {
+	return &APICache{
+		Dir: "/tmp",
+	}
+}
+
 func NewConfig() *Config {
 	return &Config{
 		Debug:        false,
 		MysqlOptions: NewDefaultMysqlOption(),
+		APICacheConf: NewDefaultAPICacheConf(),
 	}
 }
 
