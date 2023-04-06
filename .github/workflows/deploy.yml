@@ -16,5 +16,5 @@ jobs:
           make build
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -i ~/.ssh/id_rsa ./bin/hub $user@$server:/root/hub
-          ssh -i ~/.ssh/id_rsa $user@$server "nohup /root/hub --config /root/hub/config.yaml > /dev/null 2>&1 &"
+          scp -i ~/.ssh/id_rsa ./bin/hub ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/root/hub
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} "nohup /root/hub --config /root/hub/config.yaml > /dev/null 2>&1 &"
