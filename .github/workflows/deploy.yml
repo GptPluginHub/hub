@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build and deploy
+        run: |
+          make build
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          scp -i ~/.ssh/id_rsa ./bin/hub $user@$server:/root/hub
+          ssh -i ~/.ssh/id_rsa $user@$server "nohup /root/hub --config /root/hub/config.yaml > /dev/null 2>&1 &"
