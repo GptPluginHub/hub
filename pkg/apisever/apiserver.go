@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 
+	apisopenapi "github.com/GptPluginHub/hub/pkg/apis/openapi/v1alpha1"
 	apisplugin "github.com/GptPluginHub/hub/pkg/apis/plugin/v1alpha1"
 	"github.com/GptPluginHub/hub/pkg/config"
 
@@ -41,6 +42,10 @@ type Server struct {
 }
 
 func (s *Server) AddSwaggerHandler() {
+	if !s.Debug {
+		klog.Warning("Swagger is not enabled in production mode")
+		return
+	}
 	dir, err := os.Getwd()
 	if err != nil {
 		klog.Errorf("get current directory: %v", err)
@@ -62,6 +67,12 @@ func (s *Server) InstallHubApis(ctx context.Context) {
 	}
 	s.Router.HandleFunc("/healthz", livenessProbe).Methods(http.MethodGet)
 	s.Router.HandleFunc("/readyz", readinessProbe).Methods(http.MethodGet)
+}
+
+func (s *Server) AddOpenapiHandler(ctx context.Context) {
+	openAPIHandler := apisopenapi.NewOpenAPIHandler(s.Config.APICacheConf.Dir, s.Config.APICacheConf.FileName)
+	s.Router.HandleFunc("/api/hub.io/v1alpha1/openapi", openAPIHandler.OpenAPIHandler)
+	s.Router.HandleFunc("/api/hub.io/v1alpha1/openapi/data", openAPIHandler.OpenAPIHandlerData)
 }
 
 func (s *Server) Run(ctx context.Context) error {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/GptPluginHub/hub/pkg/apisever"
 	"github.com/GptPluginHub/hub/pkg/config"
+	"github.com/GptPluginHub/hub/pkg/middleware"
 
 	"github.com/gorilla/mux"
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -97,6 +98,10 @@ func (o *Options) NewServer(ctx context.Context) *apisever.Server {
 	s.AddSwaggerHandler()
 	// install apis
 	s.InstallHubApis(ctx)
+	// add openapi handler
+	s.AddOpenapiHandler(ctx)
+	// add http cost handler
+	s.Router.Use(middleware.LogRequestAndResponse)
 	s.HTTPServer.Handler = s.Router
 	return s
 }
