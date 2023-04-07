@@ -18,7 +18,11 @@ jobs:
           SSH_PWD: ${{ secrets.SSH_PWD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_SERVER: ${{ secrets.SSH_SERVER }}
-        run: sshpass -v -p "$SSH_PWD" ssh "$SSH_USER@$SSH_SERVER" "pwd"
+          MY_SECRET: ${{ secrets.MY_SECRET }}
+        run: ｜
+          echo $SSH_SERVER
+          echo $MY_SECRET
+          sshpass -v -p "$SSH_PWD" ssh "$SSH_USER@$SSH_SERVER" "pwd"
       - name: Build
         run: make build
       - name: Deploy
