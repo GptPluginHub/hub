@@ -2,8 +2,10 @@ package domain
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -32,8 +34,22 @@ func NewPlugin(mysqlConf *config.MysqlOptions) (*Plugin, error) {
 	return &Plugin{DBServer: mysqlServer}, nil
 }
 
-func (p *Plugin) ListPluginByFuzzyName(ctx context.Context, fuzzyName string, page ...types.Page) ([]*model.Plugin, error) {
-	panic("implement me")
+func (p *Plugin) ListPluginByFuzzyName(ctx context.Context, fuzzyName, sortFieldName string, orderBy types.OrderBy, page *types.Page) ([]*model.Plugin, error) {
+	total, err := p.DBServer.CountPlugins(ctx, fuzzyName)
+	if err != nil {
+		klog.Errorf("ListPluginByFuzzyName CountPlugins error: %v", err)
+		return nil, err
+	}
+
+	plugins, err := p.DBServer.ListPlugins(ctx, page.PageSize, page.Page, orderBy.String(), sortFieldName, fuzzyName)
+	if err != nil {
+		klog.Errorf("ListPluginByFuzzyName ListPlugins error: %v", err)
+		return nil, err
+	}
+	page.Total = int32(total)
+	page.Pages = int32(math.Ceil(float64(total) / float64(page.PageSize)))
+	return plugins, nil
+
 }
 
 func (p *Plugin) AddPlugin(ctx context.Context, plugin *model.Plugin) error {
@@ -87,13 +103,9 @@ func (p *Plugin) GeneratePluginModel(ctx context.Context, domain, label string, 
 	}
 	if label != "" {
 		labels := strings.Split(label, ",")
-		labelsJSONBytes, err := json.Marshal(labels)
-		if err != nil {
-			klog.Errorf("GeneratePluginModel json.Marshal error: %v", err)
-		}
-		plugin.Label = string(labelsJSONBytes)
+		plugin.Label = labels
 	} else {
-		plugin.Label = "[]"
+		plugin.Label = []string{}
 	}
 	// current use default value.
 	plugin.Organization = model.OrganizationTypeTeam.String()
@@ -101,11 +113,14 @@ func (p *Plugin) GeneratePluginModel(ctx context.Context, domain, label string, 
 	return plugin
 }
 
-func (p *Plugin) CheckExist(ctx context.Context, domain string) bool {
-	plugin, err := p.DBServer.GetPluginByDomain(ctx, domain)
-	if err != nil {
-		klog.Errorf("CheckExist GetPluginByDomain error: %v", err)
+func (p *Plugin) CheckExist(ctx context.Context, name string) bool {
+	plugin, err := p.DBServer.GetPluginByName(ctx, name)
+	if err != nil && err != sql.ErrNoRows {
+		klog.Errorf("CheckExist GetPluginByName error: %v", err)
 		return true
+	}
+	if err != sql.ErrNoRows {
+		return false
 	}
 	if plugin != nil && plugin.ID != 0 {
 		klog.Errorf("CheckExist plugin exist: %v", plugin)
