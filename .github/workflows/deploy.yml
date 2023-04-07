@@ -13,8 +13,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
-      - name: Build and deploy
+      - name: Build
+        run: make build
+      - name: Test sshpass
+        run: sshpass -p "${{ secrets.SSH_PWD }}" ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}" "pwd"
+      - name: Deploy
         run: |
-          make build
           sshpass -p "${{ secrets.SSH_PWD }}" scp "./bin/hub" "${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/root/hub"
           sshpass -p "${{ secrets.SSH_PWD }}" ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}" "nohup /root/hub --config /root/hub/config.yaml > /dev/null 2>&1 &"
