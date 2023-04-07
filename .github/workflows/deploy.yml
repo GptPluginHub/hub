@@ -14,10 +14,18 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
       - name: Test sshpass
-        run: sudo sshpass -v -p "${{ secrets.SSH_PWD }}" ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}" "pwd"
+        env: # Or as an environment variable
+          SSH_PWD: ${{ secrets.SSH_PWD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_SERVER: ${{ secrets.SSH_SERVER }}
+        run: sshpass -v -p "$SSH_PWD" ssh "$SSH_USER@$SSH_SERVER" "pwd"
       - name: Build
         run: make build
       - name: Deploy
+        env: # Or as an environment variable
+          SSH_PWD: ${{ secrets.SSH_PWD }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_SERVER: ${{ secrets.SSH_SERVER }}
         run: |
-          sudo sshpass -p "${{ secrets.SSH_PWD }}" scp "./bin/hub" "${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/root/hub"
-          sudo sshpass -p "${{ secrets.SSH_PWD }}" ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}" "nohup /root/hub --config /root/hub/config.yaml > /dev/null 2>&1 &"
+          sshpass -v -p "$SSH_PWD" scp "./bin/hub" "$SSH_USER@$SSH_SERVER:/root/hub"
+          sshpass -v -p "$SSH_PWD" ssh "$SSH_USER@$SSH_SERVER" "nohup /root/hub --config /root/hub/config.yaml > /dev/null 2>&1 &"
