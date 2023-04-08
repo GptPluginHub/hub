@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/GptPluginHub/hub/pkg/model"
-
 	"k8s.io/klog"
 )
 
@@ -40,7 +39,9 @@ func (m *pluginInfra) GetPluginByID(ctx context.Context, id string) (*model.Plug
 func (m *pluginInfra) GetPluginByName(ctx context.Context, name string) (*model.Plugin, error) {
 	row := m.db.QueryRowContext(ctx, "SELECT * FROM plugin WHERE name = ?", name)
 	var plugin model.Plugin
-	err := row.Scan(&plugin.ID, &plugin.Domain, &plugin.Name, &plugin.Description, &plugin.AuthType, &plugin.LogoURL, &plugin.ContactEmail, &plugin.Organization, &plugin.APIType, &plugin.APIURL, &plugin.Label, &plugin.State, &plugin.InstallNum, &plugin.Score, &plugin.Heat, &plugin.CreatedAt, &plugin.UpdatedAt)
+	var labelsStr string
+	err := row.Scan(&plugin.ID, &plugin.Domain, &plugin.Name, &plugin.Description, &plugin.AuthType, &plugin.LogoURL, &plugin.ContactEmail, &plugin.Organization, &plugin.APIType, &plugin.APIURL, labelsStr, &plugin.State, &plugin.InstallNum, &plugin.Score, &plugin.Heat, &plugin.CreatedAt, &plugin.UpdatedAt)
+	json.Unmarshal([]byte(labelsStr), &plugin.Label)
 	return &plugin, err
 }
 
@@ -74,7 +75,12 @@ func (m *pluginInfra) ListPlugins(ctx context.Context, limit, offset int32, orde
 }
 
 func (m *pluginInfra) CreatePlugin(ctx context.Context, plugin *model.Plugin) error {
-	r, err := m.db.ExecContext(ctx, "INSERT INTO plugin (id, domain, name, description, auth_type, logo_url, contact_email,organization, api_type,api_url, label, state, install_num,score, heat, created_at, updated_at) VALUEs (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", plugin.ID, plugin.Domain, plugin.Name, plugin.Description, plugin.AuthType, plugin.LogoURL, plugin.ContactEmail, plugin.Organization, plugin.APIType, plugin.APIURL, plugin.Label, plugin.State, plugin.InstallNum, plugin.Score, plugin.Heat, plugin.CreatedAt, plugin.UpdatedAt)
+	label := "[]"
+	if len(plugin.Label) != 0 {
+		labelBytes, _ := json.Marshal(plugin.Label)
+		label = string(labelBytes)
+	}
+	r, err := m.db.ExecContext(ctx, "INSERT INTO plugin (id, domain, name, description, auth_type, logo_url, contact_email,organization, api_type,api_url, label, state, install_num,score, heat, created_at, updated_at) VALUEs (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", plugin.ID, plugin.Domain, plugin.Name, plugin.Description, plugin.AuthType, plugin.LogoURL, plugin.ContactEmail, plugin.Organization, plugin.APIType, plugin.APIURL, label, plugin.State, plugin.InstallNum, plugin.Score, plugin.Heat, plugin.CreatedAt, plugin.UpdatedAt)
 	if err != nil {
 		klog.Errorf("create plugin failed, insert err: %v", err)
 		return err

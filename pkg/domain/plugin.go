@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"io"
 	"math"
 	"net/http"
@@ -77,6 +78,16 @@ func (p *Plugin) FetchAiPluginInfo(aiPluginURL string) (model.AiPlugin, error) {
 		return model.AiPlugin{}, err
 	}
 	defer resp.Body.Close()
+	switch resp.StatusCode {
+	case http.StatusNotFound:
+		return model.AiPlugin{}, errors.New("not found plugin")
+	case http.StatusForbidden:
+		return model.AiPlugin{}, errors.New("forbidden")
+	case http.StatusInternalServerError:
+		return model.AiPlugin{}, errors.New("plugin server error")
+	default:
+		klog.Warning("FetchAiPluginInfo status code: %v", resp.StatusCode)
+	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		klog.Errorf("FetchAiPluginInfo io.ReadAll error: %v", err)

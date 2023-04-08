@@ -25,8 +25,6 @@ const (
 )
 
 type Server struct {
-	// debug mode
-	Debug bool
 	// config
 	Config *config.Config
 	// http server
@@ -42,7 +40,7 @@ type Server struct {
 }
 
 func (s *Server) AddSwaggerHandler() {
-	if !s.Debug {
+	if !s.Config.Debug {
 		klog.Warning("Swagger is not enabled in production mode")
 		return
 	}
@@ -62,7 +60,7 @@ func (s *Server) InstallHubApis(ctx context.Context) {
 	apisplugin.RegisterGrpcService(ctx, *s.Config, s.GRPCServer)
 	apisplugin.RegisterGatewayService(ctx, s.GatewayServerMux, s.HTTPServer.Addr, opts)
 	s.Router.PathPrefix("/apis/").Handler(s.GatewayServerMux)
-	if s.Debug {
+	if s.Config.Debug {
 		s.Router.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 	}
 	s.Router.HandleFunc("/healthz", livenessProbe).Methods(http.MethodGet)

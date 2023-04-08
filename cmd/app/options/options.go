@@ -25,8 +25,6 @@ type Options struct {
 	ServerOptions *ServerOptions
 	// config
 	Conf *config.Config
-	// debug mode
-	Debug bool
 }
 
 type ServerOptions struct {
@@ -62,10 +60,9 @@ func (s *ServerOptions) AddFlags(fs *pflag.FlagSet) {
 
 func (o *Options) Flags() (fs *pflag.FlagSet) {
 	flagSet := pflag.NewFlagSet("", pflag.ExitOnError)
-	flagSet.BoolVar(&o.Debug, "debug", false, "debug mode")
 	flagSet.StringVar(&o.ConfigFile, "config", o.ConfigFile, "config file")
 	o.ServerOptions.AddFlags(flagSet)
-	o.Conf.MysqlOptions.AddFlags(flagSet)
+	o.Conf.AddFlags(flagSet)
 	return flagSet
 }
 
@@ -80,7 +77,6 @@ func NewDefaultOption() *Options {
 func (o *Options) NewServer(ctx context.Context) *apisever.Server {
 	address := fmt.Sprintf("%s:%d", o.ServerOptions.BindAddress, o.ServerOptions.InsecurePort)
 	s := &apisever.Server{
-		Debug:  o.Debug,
 		Config: o.Conf,
 		HTTPServer: &http.Server{
 			Addr: address,

@@ -1,0 +1,26 @@
+[
+  {
+    "domain": "https://www.klarna.com/",
+    "label": "Klarna,Shopping"
+  },
+  {
+    "domain": "https://zapier.com/",
+    "label": "Apps"
+  },
+  {
+    "domain": "https://api.speak.com/",
+    "label": "Speak,Learn language,Language tutor"
+  },
+  {
+    "domain": "https://www.pricerunner.com/",
+    "label": "PriceRunner,Compare prices,Price comparison"
+  },
+  {
+    "domain": "https://slack.com/",
+    "label": "Slack,Team communication,Team chat"
+  },
+  {
+    "domain": "https://www.wolframalpha.com/",
+    "label": "WolframAlpha,Mathematics,Math"
+  }
+]

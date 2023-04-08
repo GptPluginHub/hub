@@ -47,6 +47,9 @@ func (o *OpenAPIApp) generateEntry(apiURL string) (domain.OpenAPICacheEntry, err
 	}
 	key := o.Key(apiURL)
 	filename := filepath.Base(parsedURL.Path)
+	if filename == "" {
+		filename = "openapi.json"
+	}
 	filename = fmt.Sprintf("%s-%s", key, filename)
 	resp, err := http.Get(apiURL)
 	if err != nil {
