@@ -93,21 +93,15 @@
             "default": "desc"
           },
           {
-            "name": "sortBy",
-            "description": "sort by\n\n - SORT_BY_UNSPECIFIED: Unspecified is default, no sorting.\n - field_name: Sort result by name.\n - created_time: Sort result by creationTimestamp.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "SORT_BY_UNSPECIFIED",
-              "field_name",
-              "created_time"
-            ],
-            "default": "SORT_BY_UNSPECIFIED"
-          },
-          {
             "name": "fuzzyName",
             "description": "fuzzy search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sortByFieldName",
+            "description": "sort by field name",
             "in": "query",
             "required": false,
             "type": "string"
@@ -182,16 +176,6 @@
       },
       "description": "Page is for data paging."
     },
-    "typesSortBy": {
-      "type": "string",
-      "enum": [
-        "SORT_BY_UNSPECIFIED",
-        "field_name",
-        "created_time"
-      ],
-      "default": "SORT_BY_UNSPECIFIED",
-      "description": "SortBy determines the data list order reference.\n\n - SORT_BY_UNSPECIFIED: Unspecified is default, no sorting.\n - field_name: Sort result by name.\n - created_time: Sort result by creationTimestamp."
-    },
     "v1alpha1CreatePluginRequest": {
       "type": "object",
       "properties": {
@@ -251,10 +235,10 @@
         "apiUrl": {
           "type": "string"
         },
-        "label": {
+        "labels": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1alpha1PluginLabel"
+            "type": "string"
           }
         },
         "state": {
@@ -276,17 +260,6 @@
           "type": "string"
         },
         "updatedAt": {
-          "type": "string"
-        }
-      }
-    },
-    "v1alpha1PluginLabel": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
           "type": "string"
         }
       }

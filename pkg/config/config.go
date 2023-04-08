@@ -17,6 +17,12 @@ type Config struct {
 	APICacheConf *APICache     `json:"api_cache_conf" yaml:"api_cache_conf" mapstructure:"api_cache_conf"`
 }
 
+func (c *Config) AddFlags(fs *pflag.FlagSet) {
+	fs.BoolVar(&c.Debug, "debug", c.Debug, "debug mode")
+	c.MysqlOptions.AddFlags(fs)
+	c.APICacheConf.AddFlags(fs)
+}
+
 type MysqlOptions struct {
 	// mysql host
 	Host string `json:"host" yaml:"host" mapstructure:"host"`
@@ -30,17 +36,22 @@ type MysqlOptions struct {
 	Database string `json:"database" yaml:"database" mapstructure:"database"`
 }
 
-type APICache struct {
-	Dir      string `json:"dir" yaml:"dir" mapstructure:"dir"`
-	FileName string `json:"file_name" yaml:"file_name" mapstructure:"file_name"`
-}
-
 func (m *MysqlOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&m.Host, "mysql-host", m.Host, "mysql host")
 	fs.IntVar(&m.Port, "mysql-port", m.Port, "mysql port")
 	fs.StringVar(&m.User, "mysql-user", m.User, "mysql user")
 	fs.StringVar(&m.Password, "mysql-password", m.Password, "mysql password")
 	fs.StringVar(&m.Database, "mysql-database", m.Database, "mysql database")
+}
+
+type APICache struct {
+	Dir      string `json:"dir" yaml:"dir" mapstructure:"dir"`
+	FileName string `json:"file_name" yaml:"file_name" mapstructure:"file_name"`
+}
+
+func (a *APICache) AddFlags(fs *pflag.FlagSet) {
+	fs.StringVar(&a.Dir, "api-cache-dir", a.Dir, "api cache dir")
+	fs.StringVar(&a.FileName, "api-cache-file-name", a.FileName, "api cache file name")
 }
 
 func NewDefaultMysqlOption() *MysqlOptions {

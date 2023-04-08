@@ -24,7 +24,11 @@ func (p *PluginHandler) CreatePlugin(ctx context.Context, request *pluginv1alpha
 }
 
 func (p *PluginHandler) ListPlugins(ctx context.Context, req *pluginv1alpha1.ListPluginRequest) (*pluginv1alpha1.ListPluginResponse, error) {
-	panic("implement me")
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+	plugins, err := p.PluginAppInterface.ListPlugins(ctx, req)
+	return plugins, err
 }
 
 var _ pluginv1alpha1.PluginServiceServer = new(PluginHandler)
