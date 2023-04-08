@@ -20,7 +20,7 @@ func ModelPluginConvToAPIPlugin(plugin model.Plugin) *pluginv1alpha1.Plugin {
 		ApiUrl:       plugin.APIURL,
 		State:        plugin.State,
 		InstallNum:   int32(plugin.InstallNum),
-		Score:        int32(plugin.Score),
+		Score:        float32(plugin.Score),
 		Heat:         int32(plugin.Heat),
 		CreatedAt:    plugin.CreatedAt,
 		UpdatedAt:    plugin.UpdatedAt,

@@ -33,13 +33,3 @@ func dbInit(mysqlConf *config.MysqlOptions) *sql.DB {
 	}
 	return globalDB
 }
-
-func NewMysqlServer(mysqlConf *config.MysqlOptions) (*MysqlServer, error) {
-	db := dbInit(mysqlConf)
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
-	return &MysqlServer{
-		NewPluginInfra(db),
-	}, nil
-}

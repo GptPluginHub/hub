@@ -5,7 +5,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+
+	"github.com/GptPluginHub/hub/pkg/config"
 	"github.com/GptPluginHub/hub/pkg/model"
+
 	"k8s.io/klog"
 )
 
@@ -20,6 +23,8 @@ type PluginInfraInterface interface {
 	CreatePlugin(ctx context.Context, plugin *model.Plugin) error
 	// CountPlugins returns the number of plugins
 	CountPlugins(ctx context.Context, fuzzyName ...string) (int, error)
+	// UpdatePluginScoreAndHeat updates plugin state
+	UpdatePluginScoreAndHeat(ctx context.Context, id, heat int32, score float64) error
 }
 
 var _ PluginInfraInterface = new(pluginInfra)
@@ -28,12 +33,21 @@ type pluginInfra struct {
 	db *sql.DB
 }
 
-func NewPluginInfra(db *sql.DB) PluginInfraInterface {
-	return &pluginInfra{db}
+func NewPluginInfra(mysqlConf *config.MysqlOptions) (PluginInfraInterface, error) {
+	db := dbInit(mysqlConf)
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+	return &pluginInfra{db}, nil
 }
 
 func (m *pluginInfra) GetPluginByID(ctx context.Context, id string) (*model.Plugin, error) {
-	panic("implement me")
+	row := m.db.QueryRowContext(ctx, "SELECT * FROM plugin WHERE id = ?", id)
+	var plugin model.Plugin
+	var labelsStr string
+	err := row.Scan(&plugin.ID, &plugin.Domain, &plugin.Name, &plugin.Description, &plugin.AuthType, &plugin.LogoURL, &plugin.ContactEmail, &plugin.Organization, &plugin.APIType, &plugin.APIURL, labelsStr, &plugin.State, &plugin.InstallNum, &plugin.Score, &plugin.Heat, &plugin.CreatedAt, &plugin.UpdatedAt)
+	json.Unmarshal([]byte(labelsStr), &plugin.Label)
+	return &plugin, err
 }
 
 func (m *pluginInfra) GetPluginByName(ctx context.Context, name string) (*model.Plugin, error) {
@@ -96,11 +110,26 @@ func (m *pluginInfra) CreatePlugin(ctx context.Context, plugin *model.Plugin) er
 
 func (m *pluginInfra) CountPlugins(ctx context.Context, fuzzyName ...string) (int, error) {
 	var total int
-	sql := fmt.Sprintf("SELECT COUNT(*) FROM plugin")
+	sql := "SELECT COUNT(*) FROM plugin"
 	if len(fuzzyName) != 0 && fuzzyName[0] != "" {
 		sql = fmt.Sprintf("SELECT COUNT(*) FROM plugin WHERE name LIKE '%%%s%%'", fuzzyName[0])
 	}
 	err := m.db.QueryRow(sql).Scan(&total)
 	klog.Infof("count plugins succ, total is: %d", total)
 	return total, err
+}
+
+func (m *pluginInfra) UpdatePluginScoreAndHeat(ctx context.Context, id, heat int32, score float64) error {
+	r, err := m.db.ExecContext(ctx, "UPDATE plugin SET score = ?, heat = ? WHERE id = ?", score, heat, id)
+	if err != nil {
+		klog.Errorf("update plugin score and heat failed, update err: %v", err)
+		return err
+	}
+	affected, err := r.RowsAffected()
+	if err != nil {
+		klog.Errorf("update plugin score and heat failed, rows_affected err: %v", err)
+		return err
+	}
+	klog.Infof("update plugin score and heat succ, affected: %d", affected)
+	return nil
 }

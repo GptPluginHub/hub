@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"k8s.io/klog"
 	"net/http"
 	"os"
+
+	"k8s.io/klog"
 )
 
-const host = "http://127.0.0.1:8000"
-const createPluginURL = host + "/apis/hub.io/v1alpha1/plugin"
+const (
+	host            = "http://127.0.0.1:8000"
+	createPluginURL = host + "/apis/hub.io/v1alpha1/plugin"
+)
 
 func main() {
 	dir, _ := os.Getwd()

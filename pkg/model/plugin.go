@@ -1,5 +1,6 @@
 package model
 
+// Plugin is the model for plugin table.
 type Plugin struct {
 	ID           int      `gorm:"column:id" db:"id" json:"id" form:"id"`
 	Domain       string   `gorm:"column:domain" db:"domain" json:"domain" form:"domain"`
@@ -14,7 +15,7 @@ type Plugin struct {
 	Label        []string `gorm:"column:label" db:"label" json:"label" form:"label"`
 	State        string   `gorm:"column:state" db:"state" json:"state" form:"state"`
 	InstallNum   int      `gorm:"column:install_num" db:"install_num" json:"install_num" form:"install_num"`
-	Score        int      `gorm:"column:score" db:"score" json:"score" form:"score"`
+	Score        float64  `gorm:"column:score" db:"score" json:"score" form:"score"`
 	Heat         int      `gorm:"column:heat" db:"heat" json:"heat" form:"heat"`
 	CreatedAt    string   `gorm:"column:created_at" db:"created_at" json:"created_at" form:"created_at"`
 	UpdatedAt    string   `gorm:"column:updated_at" db:"updated_at" json:"updated_at" form:"updated_at"`

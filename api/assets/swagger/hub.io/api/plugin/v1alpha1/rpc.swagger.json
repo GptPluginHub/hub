@@ -48,6 +48,38 @@
         ]
       }
     },
+    "/apis/hub.io/v1alpha1/plugin/score": {
+      "post": {
+        "operationId": "PluginService_CreatePluginScore",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1alpha1CreatePluginScoreRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PluginService"
+        ]
+      }
+    },
     "/apis/hub.io/v1alpha1/plugins": {
       "get": {
         "operationId": "PluginService_ListPlugins",
@@ -187,6 +219,22 @@
         }
       }
     },
+    "v1alpha1CreatePluginScoreRequest": {
+      "type": "object",
+      "properties": {
+        "pluginId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "score": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "comments": {
+          "type": "string"
+        }
+      }
+    },
     "v1alpha1ListPluginResponse": {
       "type": "object",
       "properties": {
@@ -249,8 +297,8 @@
           "format": "int32"
         },
         "score": {
-          "type": "integer",
-          "format": "int32"
+          "type": "number",
+          "format": "float"
         },
         "heat": {
           "type": "integer",

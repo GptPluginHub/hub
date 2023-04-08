@@ -12,7 +12,8 @@ import (
 
 type PluginHandler struct {
 	*pluginv1alpha1.UnimplementedPluginServiceServer
-	PluginAppInterface application.PluginAppInterface
+	PluginAppInterface      application.PluginAppInterface
+	PluginScoreAppInterface application.PluginScoreAppInterface
 }
 
 func (p *PluginHandler) CreatePlugin(ctx context.Context, request *pluginv1alpha1.CreatePluginRequest) (*emptypb.Empty, error) {
@@ -31,9 +32,18 @@ func (p *PluginHandler) ListPlugins(ctx context.Context, req *pluginv1alpha1.Lis
 	return plugins, err
 }
 
+func (p *PluginHandler) CreatePluginScore(ctx context.Context, req *pluginv1alpha1.CreatePluginScoreRequest) (*emptypb.Empty, error) {
+	if err := req.ValidateAll(); err != nil {
+		return nil, err
+	}
+	err := p.PluginScoreAppInterface.CreatePluginScore(ctx, req)
+	return &emptypb.Empty{}, err
+}
+
 var _ pluginv1alpha1.PluginServiceServer = new(PluginHandler)
 
 func NewPluginHandler(cfg config.Config) pluginv1alpha1.PluginServiceServer {
 	app := application.NewPluginApp(cfg)
-	return &PluginHandler{PluginAppInterface: app}
+	pluginScoreApp := application.NewPluginScoreAppInterface(cfg)
+	return &PluginHandler{PluginAppInterface: app, PluginScoreAppInterface: pluginScoreApp}
 }

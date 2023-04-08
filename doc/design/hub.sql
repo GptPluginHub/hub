@@ -35,7 +35,7 @@ CREATE TABLE `plugin` (
   `label` json DEFAULT NULL COMMENT 'plugin label',
   `state` varchar(255) NOT NULL COMMENT 'plugin state,published or unpublished',
   `install_num` int NOT NULL DEFAULT '0' COMMENT 'plugin install num',
-  `score` int NOT NULL DEFAULT '0' COMMENT 'plugin score',
+  `score` float NOT NULL DEFAULT '0' COMMENT 'plugin score',
   `heat` int NOT NULL DEFAULT '0' COMMENT 'plugin heat',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

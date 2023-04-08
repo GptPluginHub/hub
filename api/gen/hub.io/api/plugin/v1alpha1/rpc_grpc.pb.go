@@ -25,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PluginServiceClient interface {
 	ListPlugins(ctx context.Context, in *ListPluginRequest, opts ...grpc.CallOption) (*ListPluginResponse, error)
 	CreatePlugin(ctx context.Context, in *CreatePluginRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreatePluginScore(ctx context.Context, in *CreatePluginScoreRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type pluginServiceClient struct {
@@ -53,12 +54,22 @@ func (c *pluginServiceClient) CreatePlugin(ctx context.Context, in *CreatePlugin
 	return out, nil
 }
 
+func (c *pluginServiceClient) CreatePluginScore(ctx context.Context, in *CreatePluginScoreRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/hub.io.api.plugin.v1alpha1.PluginService/CreatePluginScore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PluginServiceServer is the server API for PluginService service.
 // All implementations must embed UnimplementedPluginServiceServer
 // for forward compatibility
 type PluginServiceServer interface {
 	ListPlugins(context.Context, *ListPluginRequest) (*ListPluginResponse, error)
 	CreatePlugin(context.Context, *CreatePluginRequest) (*emptypb.Empty, error)
+	CreatePluginScore(context.Context, *CreatePluginScoreRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPluginServiceServer()
 }
 
@@ -71,6 +82,9 @@ func (UnimplementedPluginServiceServer) ListPlugins(context.Context, *ListPlugin
 }
 func (UnimplementedPluginServiceServer) CreatePlugin(context.Context, *CreatePluginRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePlugin not implemented")
+}
+func (UnimplementedPluginServiceServer) CreatePluginScore(context.Context, *CreatePluginScoreRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePluginScore not implemented")
 }
 func (UnimplementedPluginServiceServer) mustEmbedUnimplementedPluginServiceServer() {}
 
@@ -121,6 +135,24 @@ func _PluginService_CreatePlugin_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PluginService_CreatePluginScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePluginScoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PluginServiceServer).CreatePluginScore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hub.io.api.plugin.v1alpha1.PluginService/CreatePluginScore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PluginServiceServer).CreatePluginScore(ctx, req.(*CreatePluginScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PluginService_ServiceDesc is the grpc.ServiceDesc for PluginService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -135,6 +167,10 @@ var PluginService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePlugin",
 			Handler:    _PluginService_CreatePlugin_Handler,
+		},
+		{
+			MethodName: "CreatePluginScore",
+			Handler:    _PluginService_CreatePluginScore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
