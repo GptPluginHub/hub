@@ -97,7 +97,7 @@ func (o *Options) NewServer(ctx context.Context) *apisever.Server {
 	// add openapi handler
 	s.AddOpenapiHandler(ctx)
 	// add http cost handler
-	s.Router.Use(middleware.LogRequestAndResponse)
+	s.Router.Use(middleware.CORSHandler, middleware.LogRequestAndResponse)
 	s.HTTPServer.Handler = s.Router
 	return s
 }

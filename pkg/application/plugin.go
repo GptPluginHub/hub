@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"errors"
+
 	"github.com/GptPluginHub/hub/pkg/config"
 	"github.com/GptPluginHub/hub/pkg/domain"
 

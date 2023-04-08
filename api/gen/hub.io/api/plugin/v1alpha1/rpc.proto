@@ -23,4 +23,11 @@ service PluginService {
       body: "*"
     };
   }
+
+  rpc CreatePluginScore(hub.io.api.plugin.v1alpha1.CreatePluginScoreRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/apis/hub.io/v1alpha1/plugin/score"
+      body: "*"
+    };
+  }
 }

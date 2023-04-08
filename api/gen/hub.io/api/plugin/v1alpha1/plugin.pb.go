@@ -40,7 +40,7 @@ type Plugin struct {
 	Labels       []string `protobuf:"bytes,11,rep,name=labels,proto3" json:"labels,omitempty"`                                // plugin label
 	State        string   `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty"`                                  // plugin state,published or unpublished
 	InstallNum   int32    `protobuf:"varint,13,opt,name=install_num,json=installNum,proto3" json:"install_num,omitempty"`     // plugin install num
-	Score        int32    `protobuf:"varint,14,opt,name=score,proto3" json:"score,omitempty"`                                 // plugin score
+	Score        float32  `protobuf:"fixed32,14,opt,name=score,proto3" json:"score,omitempty"`                                // plugin score
 	Heat         int32    `protobuf:"varint,15,opt,name=heat,proto3" json:"heat,omitempty"`                                   // plugin heat
 	CreatedAt    string   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt    string   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -169,7 +169,7 @@ func (x *Plugin) GetInstallNum() int32 {
 	return 0
 }
 
-func (x *Plugin) GetScore() int32 {
+func (x *Plugin) GetScore() float32 {
 	if x != nil {
 		return x.Score
 	}
@@ -389,6 +389,69 @@ func (x *CreatePluginRequest) GetLabel() string {
 	return ""
 }
 
+type CreatePluginScoreRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PluginId uint32 `protobuf:"varint,1,opt,name=plugin_id,json=pluginId,proto3" json:"plugin_id,omitempty"`
+	Score    uint32 `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`
+	Comments string `protobuf:"bytes,3,opt,name=comments,proto3" json:"comments,omitempty"`
+}
+
+func (x *CreatePluginScoreRequest) Reset() {
+	*x = CreatePluginScoreRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreatePluginScoreRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreatePluginScoreRequest) ProtoMessage() {}
+
+func (x *CreatePluginScoreRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreatePluginScoreRequest.ProtoReflect.Descriptor instead.
+func (*CreatePluginScoreRequest) Descriptor() ([]byte, []int) {
+	return file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreatePluginScoreRequest) GetPluginId() uint32 {
+	if x != nil {
+		return x.PluginId
+	}
+	return 0
+}
+
+func (x *CreatePluginScoreRequest) GetScore() uint32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *CreatePluginScoreRequest) GetComments() string {
+	if x != nil {
+		return x.Comments
+	}
+	return ""
+}
+
 var File_hub_io_api_plugin_v1alpha1_plugin_proto protoreflect.FileDescriptor
 
 var file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc = []byte{
@@ -424,7 +487,7 @@ var file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x69,
 	0x6e, 0x73, 0x74, 0x61, 0x6c, 0x6c, 0x5f, 0x6e, 0x75, 0x6d, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x05,
 	0x52, 0x0a, 0x69, 0x6e, 0x73, 0x74, 0x61, 0x6c, 0x6c, 0x4e, 0x75, 0x6d, 0x12, 0x14, 0x0a, 0x05,
-	0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x73, 0x63, 0x6f,
+	0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x73, 0x63, 0x6f,
 	0x72, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x65, 0x61, 0x74, 0x18, 0x0f, 0x20, 0x01, 0x28, 0x05,
 	0x52, 0x04, 0x68, 0x65, 0x61, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65,
 	0x64, 0x5f, 0x61, 0x74, 0x18, 0x10, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61,
@@ -457,9 +520,18 @@ var file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc = []byte{
 	0x42, 0x07, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x01, 0x52, 0x06, 0x64, 0x6f, 0x6d, 0x61, 0x69,
 	0x6e, 0x12, 0x1d, 0x0a, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
 	0x42, 0x07, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x00, 0x52, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c,
-	0x42, 0x25, 0x5a, 0x23, 0x68, 0x75, 0x62, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70,
-	0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2f, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31, 0x3b, 0x76,
-	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x22, 0x86, 0x01, 0x0a, 0x18, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x6c, 0x75, 0x67, 0x69,
+	0x6e, 0x53, 0x63, 0x6f, 0x72, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x24, 0x0a,
+	0x09, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d,
+	0x42, 0x07, 0xfa, 0x42, 0x04, 0x2a, 0x02, 0x20, 0x00, 0x52, 0x08, 0x70, 0x6c, 0x75, 0x67, 0x69,
+	0x6e, 0x49, 0x64, 0x12, 0x1f, 0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0d, 0x42, 0x09, 0xfa, 0x42, 0x06, 0x2a, 0x04, 0x18, 0x05, 0x28, 0x00, 0x52, 0x05, 0x73,
+	0x63, 0x6f, 0x72, 0x65, 0x12, 0x23, 0x0a, 0x08, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x72, 0x02, 0x10, 0x00, 0x52,
+	0x08, 0x63, 0x6f, 0x6d, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x42, 0x25, 0x5a, 0x23, 0x68, 0x75, 0x62,
+	0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69, 0x6e, 0x2f, 0x76,
+	0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31, 0x3b, 0x76, 0x31, 0x61, 0x6c, 0x70, 0x68, 0x61, 0x31,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -474,18 +546,19 @@ func file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDescGZIP() []byte {
 	return file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDescData
 }
 
-var file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_hub_io_api_plugin_v1alpha1_plugin_proto_goTypes = []interface{}{
-	(*Plugin)(nil),              // 0: hub.io.api.plugin.v1alpha1.Plugin
-	(*ListPluginRequest)(nil),   // 1: hub.io.api.plugin.v1alpha1.ListPluginRequest
-	(*ListPluginResponse)(nil),  // 2: hub.io.api.plugin.v1alpha1.ListPluginResponse
-	(*CreatePluginRequest)(nil), // 3: hub.io.api.plugin.v1alpha1.CreatePluginRequest
-	(types.OrderBy)(0),          // 4: hub.io.api.types.OrderBy
-	(*types.Page)(nil),          // 5: hub.io.api.types.Page
+	(*Plugin)(nil),                   // 0: hub.io.api.plugin.v1alpha1.Plugin
+	(*ListPluginRequest)(nil),        // 1: hub.io.api.plugin.v1alpha1.ListPluginRequest
+	(*ListPluginResponse)(nil),       // 2: hub.io.api.plugin.v1alpha1.ListPluginResponse
+	(*CreatePluginRequest)(nil),      // 3: hub.io.api.plugin.v1alpha1.CreatePluginRequest
+	(*CreatePluginScoreRequest)(nil), // 4: hub.io.api.plugin.v1alpha1.CreatePluginScoreRequest
+	(types.OrderBy)(0),               // 5: hub.io.api.types.OrderBy
+	(*types.Page)(nil),               // 6: hub.io.api.types.Page
 }
 var file_hub_io_api_plugin_v1alpha1_plugin_proto_depIdxs = []int32{
-	4, // 0: hub.io.api.plugin.v1alpha1.ListPluginRequest.order_by:type_name -> hub.io.api.types.OrderBy
-	5, // 1: hub.io.api.plugin.v1alpha1.ListPluginResponse.page:type_name -> hub.io.api.types.Page
+	5, // 0: hub.io.api.plugin.v1alpha1.ListPluginRequest.order_by:type_name -> hub.io.api.types.OrderBy
+	6, // 1: hub.io.api.plugin.v1alpha1.ListPluginResponse.page:type_name -> hub.io.api.types.Page
 	0, // 2: hub.io.api.plugin.v1alpha1.ListPluginResponse.item:type_name -> hub.io.api.plugin.v1alpha1.Plugin
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
@@ -548,6 +621,18 @@ func file_hub_io_api_plugin_v1alpha1_plugin_proto_init() {
 				return nil
 			}
 		}
+		file_hub_io_api_plugin_v1alpha1_plugin_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreatePluginScoreRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -555,7 +640,7 @@ func file_hub_io_api_plugin_v1alpha1_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_hub_io_api_plugin_v1alpha1_plugin_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
