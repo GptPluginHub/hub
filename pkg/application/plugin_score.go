@@ -26,7 +26,7 @@ func (p *PluginScoreApp) CreatePluginScore(ctx context.Context, req *pluginv1alp
 	// add plugin score for this plugin_id
 	err := p.PluginScore.AddPluginScore(ctx, model.PluginScore{
 		PluginID: int(req.PluginId),
-		Score:    int(req.Score),
+		Score:    float64(req.Score),
 		Comments: req.Comments,
 	})
 	if err != nil {
@@ -41,7 +41,7 @@ func (p *PluginScoreApp) CreatePluginScore(ctx context.Context, req *pluginv1alp
 	}
 
 	// count all plugin score for this plugin_id
-	scores := make([]int, len(pluginScores))
+	scores := make([]float64, len(pluginScores))
 	for index, score := range pluginScores {
 		scores[index] = score.Score
 	}

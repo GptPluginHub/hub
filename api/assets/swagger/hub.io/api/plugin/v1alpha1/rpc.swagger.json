@@ -227,8 +227,8 @@
           "format": "int64"
         },
         "score": {
-          "type": "integer",
-          "format": "int64"
+          "type": "number",
+          "format": "float"
         },
         "comments": {
           "type": "string"

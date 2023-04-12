@@ -54,6 +54,6 @@ message CreatePluginRequest {
 
 message CreatePluginScoreRequest {
   uint32 plugin_id = 1 [(validate.rules).uint32 = {gt: 0}];
-  uint32 score = 2 [(validate.rules).uint32 = {gte: 0, lte: 5}];
+  float score = 2 [(validate.rules).float = {gte: 0, lte: 5}];
   string comments = 3 [(validate.rules).string = {min_len: 0}];
 }

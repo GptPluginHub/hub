@@ -30,10 +30,10 @@ func (p *PluginScore) ListPluginScoreByID(ctx context.Context, pluginID int) ([]
 	return p.PluginScoreInfra.SelectPluginScore(ctx, pluginID)
 }
 
-func (p *PluginScore) CalculateRating(ctx context.Context, scores []int) model.Rating {
+func (p *PluginScore) CalculateRating(ctx context.Context, scores []float64) model.Rating {
 	rating := model.Rating{Value: 0, Count: 0}
 	for _, score := range scores {
-		rating.Value = (rating.Value*float64(rating.Count) + float64(score)) / float64(rating.Count+1)
+		rating.Value = (rating.Value*float64(rating.Count) + score) / float64(rating.Count+1)
 		rating.Count++
 	}
 	return rating
