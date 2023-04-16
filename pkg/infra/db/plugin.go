@@ -25,6 +25,8 @@ type PluginInfraInterface interface {
 	CountPlugins(ctx context.Context, fuzzyName ...string) (int, error)
 	// UpdatePluginScoreAndHeat updates plugin state
 	UpdatePluginScoreAndHeat(ctx context.Context, id, heat int32, score float64) error
+	// UpdatePluginState updates plugin state
+	GetPluginByAPIURL(ctx context.Context, apiURL string) (*model.Plugin, error)
 }
 
 var _ PluginInfraInterface = new(pluginInfra)
@@ -64,6 +66,7 @@ func (m *pluginInfra) ListPlugins(ctx context.Context, limit, offset int32, orde
 	var rows *sql.Rows
 	var err error
 	var sql string
+	offset = limit * (offset - 1)
 	if len(fuzzyName) > 0 && fuzzyName[0] != "" {
 		sql = fmt.Sprintf("SELECT * FROM plugin WHERE name LIKE '%%%s%%' ORDER BY %s %s LIMIT ? OFFSET ?", fuzzyName[0], sortFieldName, orderBy)
 	} else {
@@ -132,4 +135,13 @@ func (m *pluginInfra) UpdatePluginScoreAndHeat(ctx context.Context, id, heat int
 	}
 	klog.Infof("update plugin score and heat succ, affected: %d", affected)
 	return nil
+}
+
+func (m *pluginInfra) GetPluginByAPIURL(ctx context.Context, apiURL string) (*model.Plugin, error) {
+	row := m.db.QueryRowContext(ctx, "SELECT * FROM plugin WHERE api_url = ?", apiURL)
+	var plugin model.Plugin
+	var labelsStr string
+	err := row.Scan(&plugin.ID, &plugin.Domain, &plugin.Name, &plugin.Description, &plugin.AuthType, &plugin.LogoURL, &plugin.ContactEmail, &plugin.Organization, &plugin.APIType, &plugin.APIURL, &labelsStr, &plugin.State, &plugin.InstallNum, &plugin.Score, &plugin.Heat, &plugin.CreatedAt, &plugin.UpdatedAt)
+	json.Unmarshal([]byte(labelsStr), &plugin.Label)
+	return &plugin, err
 }

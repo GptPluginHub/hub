@@ -21,6 +21,7 @@ var _ PluginAppInterface = new(PluginApp)
 
 type PluginApp struct {
 	domain.Plugin
+	domain.PluginMetadata
 }
 
 func (p *PluginApp) CreatePlugin(ctx context.Context, req *pluginv1alpha1.CreatePluginRequest) error {
@@ -36,7 +37,20 @@ func (p *PluginApp) CreatePlugin(ctx context.Context, req *pluginv1alpha1.Create
 	if p.CheckExist(ctx, pluginModel.Name) {
 		return errors.New("plugin already exist")
 	}
-	return p.AddPlugin(ctx, &pluginModel)
+	if err = p.AddPlugin(ctx, &pluginModel); err != nil {
+		return err
+	}
+	plugin, err := p.PluginInfra.GetPluginByName(ctx, pluginModel.Name)
+	if err != nil {
+		klog.Errorf("CreatePlugin GetPluginByName error: %v", err)
+		return err
+	}
+	pluginMetadata := p.GeneratePluginMetadata(ctx, plugin.ID, aiPluginURL)
+	if err = p.PluginMetadata.AddPluginMetadata(ctx, pluginMetadata); err != nil {
+		klog.Errorf("CreatePlugin AddPluginMetadata error: %v", err)
+		return err
+	}
+	return nil
 }
 
 func (p *PluginApp) ListPlugins(ctx context.Context, req *pluginv1alpha1.ListPluginRequest) (*pluginv1alpha1.ListPluginResponse, error) {
@@ -70,5 +84,9 @@ func NewPluginApp(cfg config.Config) PluginAppInterface {
 	if err != nil {
 		panic(err)
 	}
-	return &PluginApp{Plugin: *plugin}
+	pluginMetadata, err := domain.NewPluginMetadata(cfg.MysqlOptions)
+	if err != nil {
+		panic(err)
+	}
+	return &PluginApp{Plugin: *plugin, PluginMetadata: *pluginMetadata}
 }

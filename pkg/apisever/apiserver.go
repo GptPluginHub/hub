@@ -68,9 +68,11 @@ func (s *Server) InstallHubApis(ctx context.Context) {
 }
 
 func (s *Server) AddOpenapiHandler(ctx context.Context) {
-	openAPIHandler := apisopenapi.NewOpenAPIHandler(s.Config.APICacheConf.Dir, s.Config.APICacheConf.FileName)
+	openAPIHandler := apisopenapi.NewOpenAPIHandler(s.Config)
 	s.Router.HandleFunc("/api/hub.io/v1alpha1/openapi", openAPIHandler.OpenAPIHandler)
 	s.Router.HandleFunc("/api/hub.io/v1alpha1/openapi/data", openAPIHandler.OpenAPIHandlerData)
+	// TODO this is a temporary solution
+	s.Router.HandleFunc("/api/init", openAPIHandler.IninPluginMetadata)
 }
 
 func (s *Server) Run(ctx context.Context) error {

@@ -22,5 +22,49 @@
   {
     "domain": "https://www.wolframalpha.com/",
     "label": "WolframAlpha,Mathematics,Math"
+  },
+  {
+    "domain": "https://server.shop.app",
+    "label": "Shop,Shopify,Buyer"
+  },
+  {
+    "domain": "https://wolframcloud.com",
+    "label": "WolframCloud,Dynamic computation,Wolfram Alpha"
+  },
+  {
+    "domain": "https://datasette.io",
+    "label": "Datasette,Database,SQLite"
+  },
+  {
+    "domain": "https://www.joinmilo.com",
+    "label": "Milo,Chat,Team communication"
+  },
+  {
+    "domain": "https://apis.guru",
+    "label": "APIs.guru,API,OpenAPI"
+  },
+  {
+    "domain": "https://biztoc.com/",
+    "label": "Biztoc news"
+  },
+  {
+    "domain": "https://chat-calculator-plugin.supportmirage.repl.co/",
+    "label": "Calculator operations"
+  },
+  {
+    "domain": "https://www.freetv-app.com/",
+    "label": "Tv news"
+  },
+  {
+    "domain": "https://quickchart.io/",
+    "label": "generating charts"
+  },
+  {
+    "domain": "https://schooldigger.com/",
+    "label": "K-12 schools"
+  },
+  {
+    "domain": "https://www.urlbox.io/",
+    "label": "Screenshot,tools"
   }
 ]

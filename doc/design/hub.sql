@@ -56,5 +56,21 @@ CREATE TABLE `plugin_score` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- ----------------------------
+-- Table structure for plugin_metadata
+-- ----------------------------
+DROP TABLE IF EXISTS `plugin_metadata`;
+CREATE TABLE `plugin_metadata` (
+                                   `id` int NOT NULL AUTO_INCREMENT,
+                                   `plugin_id` int DEFAULT NULL,
+                                   `plugin_api_etag` varchar(255) DEFAULT NULL,
+                                   `plugin_api_last_modified` varchar(255) DEFAULT NULL,
+                                   `plugin_schema` LONGTEXT DEFAULT NULL,
+                                   `plugin_api` LONGTEXT DEFAULT NULL,
+                                   `create_at` timestamp NULL DEFAULT NULL,
+                                   `update_at` timestamp NULL DEFAULT NULL,
+                                   PRIMARY KEY (`id`),
+                                   UNIQUE KEY `unique_index_plugin_id` (`plugin_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

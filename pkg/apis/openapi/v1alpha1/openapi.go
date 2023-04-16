@@ -5,9 +5,12 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/GptPluginHub/hub/pkg/application"
+	"github.com/GptPluginHub/hub/pkg/config"
+
+	"hub.io/api/types"
+	"k8s.io/klog"
 )
 
 const (
@@ -20,8 +23,8 @@ type OpenAPIHandler struct {
 	OpenAPIApp application.OpenAPIAppInterface
 }
 
-func NewOpenAPIHandler(dir, fileName string) *OpenAPIHandler {
-	return &OpenAPIHandler{OpenAPIApp: application.NewOpenAPIApp(dir, fileName)}
+func NewOpenAPIHandler(config *config.Config) *OpenAPIHandler {
+	return &OpenAPIHandler{OpenAPIApp: application.NewOpenAPIApp(config.APICacheConf.Dir, config.APICacheConf.FileName, config.MysqlOptions)}
 }
 
 func (o *OpenAPIHandler) OpenAPIHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,14 +45,28 @@ func (o *OpenAPIHandler) OpenAPIHandlerData(w http.ResponseWriter, r *http.Reque
 	if value == "" {
 		return
 	}
-	apiFilePath, err := o.OpenAPIApp.GetOpenAPIFilePath(value)
+	apiData, err := o.OpenAPIApp.GetOpenAPIData(r.Context(), value)
 	if err != nil {
 		return
 	}
-	file, err := os.Open(apiFilePath)
+	defer apiData.Close()
+	io.Copy(w, apiData)
+}
+
+func (o *OpenAPIHandler) IninPluginMetadata(w http.ResponseWriter, r *http.Request) {
+	app := o.OpenAPIApp.(*application.OpenAPIApp)
+	plugins, err := app.Plugin.ListPluginByFuzzyName(r.Context(), "", "id", types.OrderBy_desc, &types.Page{
+		Page:     1,
+		PageSize: 100,
+	})
 	if err != nil {
 		return
 	}
-	defer file.Close()
-	io.Copy(w, file)
+	for _, plugin := range plugins {
+		url := app.GeneratePluginURL(r.Context(), plugin.Domain)
+		pluginMetadata := app.GeneratePluginMetadata(r.Context(), plugin.ID, url)
+		if err = app.PluginMetadata.AddPluginMetadata(r.Context(), pluginMetadata); err != nil {
+			klog.Errorf("CreatePlugin AddPluginMetadata error: %v", err)
+		}
+	}
 }
