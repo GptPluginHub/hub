@@ -17,7 +17,8 @@ const (
 
 func main() {
 	dir, _ := os.Getwd()
-	filePath := dir + "/data.json"
+	filePath := dir + "/example/data.json"
+	klog.Infof(filePath)
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)

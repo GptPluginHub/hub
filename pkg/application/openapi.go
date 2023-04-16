@@ -1,13 +1,17 @@
 package application
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/GptPluginHub/hub/pkg/config"
 	"github.com/GptPluginHub/hub/pkg/domain"
 
 	"k8s.io/klog"
@@ -16,6 +20,8 @@ import (
 type OpenAPIAppInterface interface {
 	// GetOpenAPIFilePath return local cache openapi json file path
 	GetOpenAPIFilePath(apiURL string) (string, error)
+	// GetOpenAPIData return openapi json data
+	GetOpenAPIData(ctx context.Context, apiURL string) (io.ReadCloser, error)
 }
 
 var _ OpenAPIAppInterface = new(OpenAPIApp)
@@ -23,6 +29,8 @@ var _ OpenAPIAppInterface = new(OpenAPIApp)
 type OpenAPIApp struct {
 	openAPIDir string
 	domain.OpenAPICacheInterface
+	domain.Plugin
+	domain.PluginMetadata
 }
 
 // GetOpenAPIFilePath return local cache openapi json file path.
@@ -38,6 +46,24 @@ func (o *OpenAPIApp) GetOpenAPIFilePath(apiURL string) (string, error) {
 		return "", err
 	}
 	return cacheEntry.APIFilePath, nil
+}
+
+func (o *OpenAPIApp) GetOpenAPIData(ctx context.Context, apiURL string) (io.ReadCloser, error) {
+	plugin, err := o.Plugin.PluginInfra.GetPluginByAPIURL(ctx, apiURL)
+	if err != nil {
+		klog.Errorf("GetOpenAPIData GetPluginByAPIURL error: %v", err)
+		return nil, err
+	}
+	metaData, err := o.PluginMetadata.PluginMetadataInfra.SelectPluginMetaDataAll(ctx, plugin.ID)
+	if err != nil {
+		klog.Errorf("GetOpenAPIData SelectPluginMetaDataAll error: %v", err)
+		return nil, err
+	}
+	if metaData.PluginAPI == "" {
+		klog.Errorf("GetOpenAPIData pluginAPI is empty")
+		return nil, errors.New("pluginAPI is empty")
+	}
+	return io.NopCloser(strings.NewReader(metaData.PluginAPI)), nil
 }
 
 func (o *OpenAPIApp) generateEntry(apiURL string) (domain.OpenAPICacheEntry, error) {
@@ -83,14 +109,24 @@ func (o *OpenAPIApp) generateEntry(apiURL string) (domain.OpenAPICacheEntry, err
 	}, nil
 }
 
-func NewOpenAPIApp(dir, fileName string) OpenAPIAppInterface {
+func NewOpenAPIApp(dir, fileName string, mysqlConf *config.MysqlOptions) OpenAPIAppInterface {
 	if dir == "" {
 		dir = domain.DefaultCacheDir
 	}
 	openAPIDir := filepath.Join(dir, domain.DefaultOpenAPIDirName)
 	openAPICache := domain.NewOpenAPICache(dir, fileName)
+	plugin, err := domain.NewPlugin(mysqlConf)
+	if err != nil {
+		panic(err)
+	}
+	pluginMetadata, err := domain.NewPluginMetadata(mysqlConf)
+	if err != nil {
+		panic(err)
+	}
 	return &OpenAPIApp{
 		openAPIDir:            openAPIDir,
 		OpenAPICacheInterface: openAPICache,
+		Plugin:                *plugin,
+		PluginMetadata:        *pluginMetadata,
 	}
 }
