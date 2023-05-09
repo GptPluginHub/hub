@@ -60,8 +60,17 @@ func (o *OpenAPIApp) GetOpenAPIData(ctx context.Context, apiURL string) (io.Read
 		return nil, err
 	}
 	if metaData.PluginAPI == "" {
-		klog.Errorf("GetOpenAPIData pluginAPI is empty")
-		return nil, errors.New("pluginAPI is empty")
+		pluginMetadata := o.PluginMetadata.GeneratePluginMetadata(ctx, plugin.ID, apiURL)
+		pluginMetadata.ID = metaData.ID
+		if err := o.PluginMetadata.UpdatePluginMetadata(ctx, pluginMetadata); err != nil {
+			klog.Errorf("GetOpenAPIData UpdatePluginMetadata error: %v", err)
+			return nil, errors.New("pluginAPI is empty")
+		}
+		metaData.PluginAPI = pluginMetadata.PluginAPI
+		if metaData.PluginAPI == "" {
+			klog.Errorf("GetOpenAPIData pluginAPI is empty")
+			return nil, errors.New("pluginAPI is empty")
+		}
 	}
 	return io.NopCloser(strings.NewReader(metaData.PluginAPI)), nil
 }
