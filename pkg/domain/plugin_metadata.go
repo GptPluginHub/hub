@@ -22,6 +22,10 @@ func (p *PluginMetadata) AddPluginMetadata(ctx context.Context, metadata model.P
 	return p.PluginMetadataInfra.InsertPluginMetadata(ctx, metadata)
 }
 
+func (p *PluginMetadata) UpdatePluginMetadata(ctx context.Context, metadata model.PluginMetadata) error {
+	return p.PluginMetadataInfra.UpdatePluginMetadata(ctx, metadata)
+}
+
 func (p *PluginMetadata) GeneratePluginMetadata(ctx context.Context, pluginID int, pluginURL string) model.PluginMetadata {
 	schemaData, openAPIURL, header, err := p.getPluginSchemaData(ctx, pluginURL)
 	if err != nil {
